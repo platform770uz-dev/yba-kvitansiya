@@ -6,6 +6,30 @@
   let adminPin='',adminName='',receipts=[],current=null,filteredReceipts=[];
   const setStatus=(el,msg,error=false)=>{el.textContent=msg;el.hidden=!msg;el.classList.toggle('error',error)};
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let qrLoadPromise;
+  function loadQrCode(){
+    if(window.QRCode?.toCanvas)return Promise.resolve();
+    if(qrLoadPromise)return qrLoadPromise;
+    const sources=[
+      'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js',
+      'https://unpkg.com/qrcode@1.5.4/build/qrcode.min.js'
+    ];
+    qrLoadPromise=(async()=>{
+      for(const src of sources){
+        try{
+          await new Promise((resolve,reject)=>{
+            const script=document.createElement('script');let done=false;
+            const finish=fn=>{if(done)return;done=true;clearTimeout(timer);script.onload=null;script.onerror=null;fn()};
+            const timer=setTimeout(()=>finish(()=>reject(new Error('qr timeout'))),7000);
+            script.src=src;script.async=true;script.onload=()=>finish(()=>window.QRCode?.toCanvas?resolve():reject(new Error('qr unavailable')));script.onerror=()=>finish(()=>reject(new Error('qr load failed')));document.head.append(script);
+          });
+          return;
+        }catch(_){}
+      }
+      qrLoadPromise=null;throw new Error('QR library unavailable');
+    })();
+    return qrLoadPromise;
+  }
   const showLogin=()=>{$('loginView').hidden=false;$('adminView').hidden=true;$('pin').value='';$('pin').focus()};
   async function adminApi(action,payload={}){
     const res=await fetch(`${cfg.supabaseUrl}/functions/v1/kv-admin`,{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.supabaseKey},body:JSON.stringify({pin:adminPin,action,...payload})});
@@ -57,7 +81,16 @@
   async function loadReceipts(){if(!adminPin)return;try{const {data}=await adminApi('list');receipts=data||[];renderList()}catch(_){$('receiptList').innerHTML='<p class="empty">Roʻyxat yuklanmadi. PIN yoki ulanishni tekshiring.</p>'}}
   ['search','statusFilter','period','dateFrom','dateTo'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{$('customDates').hidden=$('period').value!=='custom';renderList()}));
   function rowPurpose(r){return r.purpose==='Boshqa'?r.purpose_other:r.purpose}
-  async function openReceipt(r){current=r;$('receiptModal').hidden=false;$('rNumber').textContent=String(r.number).padStart(6,'0');$('rDate').textContent=stamp(r.paid_at);$('rPayer').textContent=r.payer_name;$('rChild').textContent=r.child_name;$('rPurpose').textContent=rowPurpose(r);$('rMethod').textContent=r.method;$('rAmount').textContent=money(r.amount);$('rWords').textContent=KVAmount.spellAmount(Number(r.amount));$('rAdmin').textContent=adminName;$('rFooter').textContent=cfg.receiptFooter||'';$('providerLines').replaceChildren();for(const [label,val] of [['Ijrochi',cfg.providerName],['STIR',cfg.stir],['Telefon',cfg.providerPhone]])if(val){const d=document.createElement('div'),s=document.createElement('small'),b=document.createElement('strong');s.textContent=label;b.textContent=val;d.append(s,b);$('providerLines').append(d)}$('contractLine').hidden=!r.contract_no;$('rContract').textContent=r.contract_no||'';$('cancelStamp').hidden=r.status!=='cancelled';$('cancelReceipt').hidden=r.status!=='active';$('openTelegram').hidden=!r.phone;setStatus($('receiptStatus'),'');const link=new URL('v.html',cfg.pagesUrl||location.href);link.searchParams.set('c',r.code);current.verifyUrl=link.href;await QRCode.toCanvas($('receiptQr'),link.href,{errorCorrectionLevel:'H',margin:4,width:360,color:{dark:'#1A2238',light:'#FFFFFF'}})}
+  async function openReceipt(r){
+    current=r;$('receiptModal').hidden=false;
+    $('rNumber').textContent=String(r.number).padStart(6,'0');$('rDate').textContent=stamp(r.paid_at);$('rPayer').textContent=r.payer_name;$('rChild').textContent=r.child_name;$('rPurpose').textContent=rowPurpose(r);$('rMethod').textContent=r.method;$('rAmount').textContent=money(r.amount);$('rWords').textContent=KVAmount.spellAmount(Number(r.amount));$('rAdmin').textContent=adminName;$('rFooter').textContent=cfg.receiptFooter||'';
+    $('providerLines').replaceChildren();for(const [label,val] of [['Ijrochi',cfg.providerName],['STIR',cfg.stir],['Telefon',cfg.providerPhone]])if(val){const d=document.createElement('div'),s=document.createElement('small'),b=document.createElement('strong');s.textContent=label;b.textContent=val;d.append(s,b);$('providerLines').append(d)}
+    $('contractLine').hidden=!r.contract_no;$('rContract').textContent=r.contract_no||'';$('cancelStamp').hidden=r.status!=='cancelled';$('cancelReceipt').hidden=r.status!=='active';$('openTelegram').hidden=!r.phone;setStatus($('receiptStatus'),'');
+    const link=new URL('v.html',cfg.pagesUrl||location.href);link.searchParams.set('c',r.code);current.verifyUrl=link.href;
+    const canvas=$('receiptQr'),message=$('qrMessage');canvas.hidden=true;message.textContent='QR tayyorlanmoqda…';
+    try{await loadQrCode();await window.QRCode.toCanvas(canvas,link.href,{errorCorrectionLevel:'H',margin:3,width:300,color:{dark:'#111827',light:'#FFFFFF'}});canvas.hidden=false;message.textContent='Haqiqiyligini tekshirish uchun skanerlang.'}
+    catch(_){message.textContent='QR yuklanmadi. Tekshiruv havolasi uchun «Nusxa havola» tugmasini bosing.';setStatus($('receiptStatus'),'QR yaratilmadi. Internetni tekshirib, kvitansiyani qayta oching.',true)}
+  }
   $('closeReceipt').onclick=()=>{$('receiptModal').hidden=true};$('receiptModal').addEventListener('click',e=>{if(e.target===$('receiptModal'))$('receiptModal').hidden=true});
   async function receiptPng(){return await html2canvas($('receiptCard'),{scale:3,backgroundColor:'#ffffff',useCORS:true,logging:false})}
   async function receiptFile(triggerDownload=false){const c=await receiptPng(),name=`kvitansiya-${String(current.number).padStart(6,'0')}.png`;if(triggerDownload){const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=name;a.click()}return new File([await new Promise(ok=>c.toBlob(ok,'image/png'))],name,{type:'image/png'})}async function downloadPng(){return receiptFile(true)}
