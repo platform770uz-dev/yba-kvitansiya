@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#1A2238"><title>Kvitansiya — Yosh blogerlar akademiyasi</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=receipt-clean-20261023">
 </head>
 <body>
 <main class="shell">
@@ -42,14 +42,15 @@
   <section id="receiptModal" class="modal" hidden>
     <div class="modal-card"><div class="modal-head"><h2>Kvitansiya</h2><button id="closeReceipt" class="icon-button" aria-label="Yopish">×</button></div>
       <div id="receiptCard" class="receipt-card">
-        <div class="receipt-brand"><span class="mark">YB</span><div><strong>YOSH BLOGERLAR AKADEMIYASI</strong><small>TOʻLOV KVITANSIYASI</small></div></div>
+        <div class="receipt-brand"><div class="receipt-brand-left"><span class="mark">YB</span><div><strong>YOSH BLOGERLAR AKADEMIYASI</strong><small>Toʻlov kvitansiyasi</small></div></div><span class="receipt-doc-type">YBA · KASSA</span></div>
         <div id="cancelStamp" class="cancel-stamp" hidden>BEKOR QILINGAN</div>
-        <div class="receipt-number">№ <span id="rNumber"></span></div>
+        <div class="receipt-number-row"><div><small>Kvitansiya raqami</small><strong>№ <span id="rNumber"></span></strong></div><div><small>Sana va vaqt</small><strong id="rDate"></strong></div></div>
         <div id="providerLines" class="receipt-lines"></div>
-        <div class="receipt-lines"><div><small>Sana va vaqt</small><strong id="rDate"></strong></div><div><small>Toʻlovchi</small><strong id="rPayer"></strong></div><div><small>Bola</small><strong id="rChild"></strong></div><div><small>Maqsad</small><strong id="rPurpose"></strong></div><div><small>Toʻlov usuli</small><strong id="rMethod"></strong></div><div id="contractLine" hidden><small>Shartnoma №</small><strong id="rContract"></strong></div></div>
+        <div class="receipt-section-title">TOʻLOV MAʼLUMOTLARI</div>
+        <div class="receipt-lines"><div><small>Toʻlovchi</small><strong id="rPayer"></strong></div><div><small>Bola</small><strong id="rChild"></strong></div><div><small>Maqsad</small><strong id="rPurpose"></strong></div><div><small>Toʻlov usuli</small><strong id="rMethod"></strong></div><div id="contractLine" hidden><small>Shartnoma №</small><strong id="rContract"></strong></div></div>
         <div class="receipt-amount"><small>Qabul qilingan summa</small><strong><span id="rAmount"></span> soʻm</strong><p id="rWords"></p></div>
         <p class="received-by">Qabul qildi: <strong id="rAdmin"></strong></p>
-        <div class="qr-wrap"><canvas id="receiptQr"></canvas><p>Haqiqiyligini tekshirish uchun QR ni skanerlang</p></div>
+        <div class="qr-wrap"><canvas id="receiptQr" role="img" aria-label="Kvitansiyani tekshirish QR kodi" hidden></canvas><div><strong>Elektron tekshiruv</strong><p id="qrMessage">QR tayyorlanmoqda…</p></div></div>
         <p class="receipt-footer" id="rFooter"></p>
       </div>
       <div class="action-grid"><button id="shareTelegram" class="button primary">Telegramga yuborish</button><button id="openTelegram" class="button secondary" hidden>Telegramda ochish</button><button id="downloadPng" class="button secondary">PNG yuklab olish</button><button id="downloadPdf" class="button secondary">PDF yuklab olish</button><button id="copyLink" class="button secondary">Nusxa havola</button><button id="cancelReceipt" class="button danger" hidden>Bekor qilish</button></div>
@@ -58,9 +59,8 @@
   </section>
   <footer>Yosh blogerlar akademiyasi</footer>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
-<script src="config.js"></script><script src="amount.js"></script><script src="app.js"></script>
+<script src="config.js"></script><script src="amount.js"></script><script src="app.js?v=qr-fallback-20261023"></script>
 </body></html>
 
