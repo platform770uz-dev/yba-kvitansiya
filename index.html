@@ -10,10 +10,9 @@
   <header class="topbar"><div class="mark">YB</div><div><strong>Yosh blogerlar akademiyasi</strong><small>Kvitansiyalar</small></div></header>
   <section id="loginView" class="panel login-panel">
     <p class="eyebrow">ADMINISTRATOR</p><h1>Kirish</h1>
-    <form id="loginForm"><label>Email<input id="email" type="email" autocomplete="username" required></label><label>Parol<input id="password" type="password" autocomplete="current-password" required></label><button class="button primary" type="submit">Kirish</button></form>
-    <p id="loginError" class="error" hidden></p>
+    <form id="loginForm"><label>PIN kodi<input id="pin" type="password" inputmode="numeric" autocomplete="off" pattern="[0-9]{4}" maxlength="4" required></label><button class="button primary" type="submit">Kirish</button></form>
+    <p id="loginStatus" class="status" role="status" hidden></p><p id="loginError" class="error" hidden></p>
   </section>
-  <section id="deniedView" class="panel" hidden><h1>Ruxsat yoʻq</h1><p>Bu hisob kvitansiya yaratish uchun roʻyxatga olinmagan.</p><button id="deniedLogout" class="button secondary">Chiqish</button></section>
   <section id="adminView" hidden>
     <div class="welcome-line"><div><p class="eyebrow">KASSA</p><h1 id="adminName">Kvitansiyalar</h1></div><button id="logout" class="button secondary small">Chiqish</button></div>
     <nav class="tabs"><button class="tab active" data-tab="create">Yangi kvitansiya</button><button class="tab" data-tab="list">Roʻyxat</button></nav>
@@ -59,9 +58,9 @@
   </section>
   <footer>Yosh blogerlar akademiyasi</footer>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script src="config.js"></script><script src="amount.js"></script><script src="app.js"></script>
 </body></html>
+
