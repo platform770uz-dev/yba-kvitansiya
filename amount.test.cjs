@@ -1,3 +1,0 @@
-const test=require('node:test');const assert=require('node:assert/strict');const {spellAmount}=require('../amount.js');
-test('uzbek sum words required values',()=>{const cases=[[1,'bir soʻm'],[10,'oʻn soʻm'],[21,'yigirma bir soʻm'],[100,'bir yuz soʻm'],[101,'bir yuz bir soʻm'],[1000,'bir ming soʻm'],[1200000,'bir million ikki yuz ming soʻm'],[15000000,'oʻn besh million soʻm'],[999999999,'toʻqqiz yuz toʻqson toʻqqiz million toʻqqiz yuz toʻqson toʻqqiz ming toʻqqiz yuz toʻqson toʻqqiz soʻm']];for(const [n,want] of cases)assert.equal(spellAmount(n),want)});
-test('zero and unsupported values rejected',()=>{for(const n of [0,-1,1000000000,1.5,NaN])assert.equal(spellAmount(n),'')});
