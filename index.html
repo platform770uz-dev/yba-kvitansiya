@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="uz-Latn">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1A2238"><title>Kvitansiya — Yosh blogerlar akademiyasi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="shell">
+  <header class="topbar"><div class="mark">YB</div><div><strong>Yosh blogerlar akademiyasi</strong><small>Kvitansiyalar</small></div></header>
+  <section id="loginView" class="panel login-panel">
+    <p class="eyebrow">ADMINISTRATOR</p><h1>Kirish</h1>
+    <form id="loginForm"><label>Email<input id="email" type="email" autocomplete="username" required></label><label>Parol<input id="password" type="password" autocomplete="current-password" required></label><button class="button primary" type="submit">Kirish</button></form>
+    <p id="loginError" class="error" hidden></p>
+  </section>
+  <section id="deniedView" class="panel" hidden><h1>Ruxsat yoʻq</h1><p>Bu hisob kvitansiya yaratish uchun roʻyxatga olinmagan.</p><button id="deniedLogout" class="button secondary">Chiqish</button></section>
+  <section id="adminView" hidden>
+    <div class="welcome-line"><div><p class="eyebrow">KASSA</p><h1 id="adminName">Kvitansiyalar</h1></div><button id="logout" class="button secondary small">Chiqish</button></div>
+    <nav class="tabs"><button class="tab active" data-tab="create">Yangi kvitansiya</button><button class="tab" data-tab="list">Roʻyxat</button></nav>
+    <section id="createPane" class="panel">
+      <h2>Toʻlov maʼlumotlari</h2>
+      <form id="receiptForm">
+        <label>Toʻlovchi (ota-ona) F.I.Sh.<input id="payer" required maxlength="160" autocomplete="name"></label>
+        <label>Bola F.I.Sh.<input id="child" required maxlength="160"></label>
+        <label>Telefon (ixtiyoriy)<input id="phone" inputmode="tel" autocomplete="tel" placeholder="+998 90 123 45 67" maxlength="30"></label>
+        <label>Maqsad<select id="purpose" required><option value="Sinov mashgʻuloti">Sinov mashgʻuloti</option><option value="1-oy toʻlovi">1-oy toʻlovi</option><option value="2-oy toʻlovi">2-oy toʻlovi</option><option value="3-oy toʻlovi">3-oy toʻlovi</option><option value="Boshqa">Boshqa</option></select></label>
+        <label id="purposeOtherWrap" hidden>Boshqa maqsad<input id="purposeOther" maxlength="160"></label>
+        <label>Summa (soʻm)<input id="amount" type="text" inputmode="numeric" required autocomplete="off" placeholder="1 500 000"></label><p id="amountWords" class="amount-words">Summani soʻz bilan koʻrsatish</p>
+        <label>Toʻlov usuli<select id="method" required><option>Naqd</option><option>Karta</option><option>Click</option><option>Payme</option><option>Bank oʻtkazmasi</option></select></label>
+        <label>Shartnoma raqami (ixtiyoriy)<input id="contractNo" maxlength="100"></label>
+        <label>Toʻlov sanasi va vaqti<input id="paidAt" type="datetime-local" required></label>
+        <button id="createButton" class="button primary" type="submit">Kvitansiya yaratish</button>
+      </form><p id="formStatus" class="status" role="status" hidden></p>
+    </section>
+    <section id="listPane" class="panel" hidden>
+      <div class="section-title"><div><p class="eyebrow">TARIX</p><h2>Roʻyxat</h2></div><button id="csvButton" class="button secondary small">CSV yuklab olish</button></div>
+      <label>Qidirish<input id="search" placeholder="F.I.Sh., telefon, raqam yoki shartnoma"></label>
+      <div class="filters"><label>Davr<select id="period"><option value="all">Barcha vaqt</option><option value="today">Bugun</option><option value="week">Shu hafta</option><option value="month">Shu oy</option><option value="custom">Davr tanlash</option></select></label><label>Holat<select id="statusFilter"><option value="all">Barchasi</option><option value="active">Faol</option><option value="cancelled">Bekor</option></select></label></div>
+      <div id="customDates" class="filters" hidden><label>Boshlanish<input id="dateFrom" type="date"></label><label>Tugash<input id="dateTo" type="date"></label></div>
+      <p id="totals" class="totals"></p><div id="receiptList" class="receipt-list"></div>
+    </section>
+  </section>
+  <section id="receiptModal" class="modal" hidden>
+    <div class="modal-card"><div class="modal-head"><h2>Kvitansiya</h2><button id="closeReceipt" class="icon-button" aria-label="Yopish">×</button></div>
+      <div id="receiptCard" class="receipt-card">
+        <div class="receipt-brand"><span class="mark">YB</span><div><strong>YOSH BLOGERLAR AKADEMIYASI</strong><small>TOʻLOV KVITANSIYASI</small></div></div>
+        <div id="cancelStamp" class="cancel-stamp" hidden>BEKOR QILINGAN</div>
+        <div class="receipt-number">№ <span id="rNumber"></span></div>
+        <div id="providerLines" class="receipt-lines"></div>
+        <div class="receipt-lines"><div><small>Sana va vaqt</small><strong id="rDate"></strong></div><div><small>Toʻlovchi</small><strong id="rPayer"></strong></div><div><small>Bola</small><strong id="rChild"></strong></div><div><small>Maqsad</small><strong id="rPurpose"></strong></div><div><small>Toʻlov usuli</small><strong id="rMethod"></strong></div><div id="contractLine" hidden><small>Shartnoma №</small><strong id="rContract"></strong></div></div>
+        <div class="receipt-amount"><small>Qabul qilingan summa</small><strong><span id="rAmount"></span> soʻm</strong><p id="rWords"></p></div>
+        <p class="received-by">Qabul qildi: <strong id="rAdmin"></strong></p>
+        <div class="qr-wrap"><canvas id="receiptQr"></canvas><p>Haqiqiyligini tekshirish uchun QR ni skanerlang</p></div>
+        <p class="receipt-footer" id="rFooter"></p>
+      </div>
+      <div class="action-grid"><button id="shareTelegram" class="button primary">Telegramga yuborish</button><button id="openTelegram" class="button secondary" hidden>Telegramda ochish</button><button id="downloadPng" class="button secondary">PNG yuklab olish</button><button id="downloadPdf" class="button secondary">PDF yuklab olish</button><button id="copyLink" class="button secondary">Nusxa havola</button><button id="cancelReceipt" class="button danger" hidden>Bekor qilish</button></div>
+      <p id="receiptStatus" class="status" role="status" hidden></p>
+    </div>
+  </section>
+  <footer>Yosh blogerlar akademiyasi</footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="config.js"></script><script src="amount.js"></script><script src="app.js"></script>
+</body></html>
